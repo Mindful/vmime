@@ -91,6 +91,7 @@ public:
 	std::vector <shared_ptr <message> > getMessages(const messageSet& msgs);
 
 	std::vector <int> getMessageNumbersStartingOnUID(const message::uid& uid);
+	messageSet UIDSearch(const std::string& input);
 
 	int getMessageCount();
 

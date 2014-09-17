@@ -1376,6 +1376,60 @@ void IMAPFolder::noop()
 	processStatusUpdate(resp.get());
 }
 
+messageSet IMAPFolder::UIDSearch(const std::string& input)
+{
+	// Send the request
+
+	std::vector <string> searchKeys;
+	searchKeys.push_back(input);
+
+	IMAPCommand::UIDSEARCH(searchKeys, /* charset */ NULL)->send(m_connection);
+
+	// Get the response
+	std::auto_ptr <IMAPParser::response> resp(m_connection->readResponse());
+
+	if (resp->isBad() ||
+	    resp->response_done()->response_tagged()->resp_cond_state()->status() != IMAPParser::resp_cond_state::OK)
+	{
+		throw exceptions::command_error("SEARCH",
+			resp->getErrorLog(), "bad response");
+	}
+
+	const std::vector <IMAPParser::continue_req_or_response_data*>& respDataList = resp->continue_req_or_response_data();
+	std::vector <message::uid> uids;
+
+	for (std::vector <IMAPParser::continue_req_or_response_data*>::const_iterator
+	     it = respDataList.begin() ; it != respDataList.end() ; ++it)
+	{
+		if ((*it)->response_data() == NULL)
+		{
+			throw exceptions::command_error("SEARCH",
+				resp->getErrorLog(), "invalid response");
+		}
+
+		const IMAPParser::mailbox_data* mailboxData =
+			(*it)->response_data()->mailbox_data();
+
+		// We are only interested in responses of type "SEARCH"
+		if (mailboxData == NULL ||
+		    mailboxData->type() != IMAPParser::mailbox_data::SEARCH)
+		{
+			continue;
+		}
+
+		for (std::vector <IMAPParser::nz_number*>::const_iterator
+				it = mailboxData->search_nz_number_list().begin() ;
+		     it != mailboxData->search_nz_number_list().end();
+		     ++it)
+		{
+			uids.push_back(message::uid((*it)->value()));
+		}
+	}
+
+	processStatusUpdate(resp.get());
+
+	return messageSet::byUID(uids);
+}
 
 std::vector <int> IMAPFolder::getMessageNumbersStartingOnUID(const message::uid& uid)
 {

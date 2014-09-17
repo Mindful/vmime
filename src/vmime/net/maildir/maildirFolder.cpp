@@ -1262,6 +1262,11 @@ std::vector <int> maildirFolder::getMessageNumbersStartingOnUID(const message::u
 	throw exceptions::operation_not_supported();
 }
 
+messageSet UIDSearch(const std::string& input)
+{
+	throw exceptions::operation_not_supported();
+}
+
 
 } // maildir
 } // net

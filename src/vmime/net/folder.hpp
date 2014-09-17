@@ -396,6 +396,15 @@ public:
  	  */
 	virtual std::vector <int> getMessageNumbersStartingOnUID(const message::uid& uid) = 0;
 
+	/** Return the UID numbers of messages matching the IMAP search string. 
+	  *
+	  *
+	  * @param input the raw IMAP string, minus "UID SEARCH"
+	  *
+	  */
+	virtual messageSet UIDSearch(const std::string& input) = 0;
+
+
 	// Event listeners
 	void addMessageChangedListener(events::messageChangedListener* l);
 	void removeMessageChangedListener(events::messageChangedListener* l);

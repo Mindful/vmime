@@ -733,6 +733,11 @@ std::vector <int> POP3Folder::getMessageNumbersStartingOnUID(const message::uid&
 	throw exceptions::operation_not_supported();
 }
 
+messageSet UIDSearch(const std::string& input)
+{
+	throw exceptions::operation_not_supported();
+}
+
 
 } // pop3
 } // net
