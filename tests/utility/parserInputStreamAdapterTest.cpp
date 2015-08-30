@@ -21,18 +21,31 @@
 // the GNU General Public License cover the whole combination.
 //
 
-#include "vmime/charsetConverterOptions.hpp"
+#include "tests/testUtils.hpp"
+
+#include "vmime/utility/parserInputStreamAdapter.hpp"
 
 
-namespace vmime
-{
+VMIME_TEST_SUITE_BEGIN(parserInputStreamAdapterTest)
+
+	VMIME_TEST_LIST_BEGIN
+		VMIME_TEST(testEndlessLoopBufferSize)
+	VMIME_TEST_LIST_END
 
 
-charsetConverterOptions::charsetConverterOptions()
-	: silentlyReplaceInvalidSequences(true),
-	  invalidSequence("?")
-{
-}
+	void testEndlessLoopBufferSize()
+	{
+		static const unsigned int BUFFER_SIZE = 4096;  // same as in parserInputStreamAdapter::findNext()
 
+		vmime::string str(BUFFER_SIZE, 'X');
 
-} // vmime
+		vmime::shared_ptr <vmime::utility::inputStreamStringAdapter> iss =
+			vmime::make_shared <vmime::utility::inputStreamStringAdapter>(str);
+
+		vmime::shared_ptr <vmime::utility::parserInputStreamAdapter> parser =
+			vmime::make_shared <vmime::utility::parserInputStreamAdapter>(iss);
+
+		VASSERT_EQ("Not found", vmime::string::npos, parser->findNext("token"));
+	}
+
+VMIME_TEST_SUITE_END

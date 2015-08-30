@@ -44,8 +44,26 @@ private:
 
 public:
 
+	/** Construct a parameter with no value.
+	  * Charset is set to the current locale charset.
+	  *
+	  * @param name parameter name
+	  */
 	parameter(const string& name);
+
+	/** Construct a parameter given a name and a value.
+	  *
+	  * @param name parameter name
+	  * @param value parameter value
+	  */
 	parameter(const string& name, const word& value);
+
+	/** Construct a parameter given a name and a string value
+	  * expressed in the current locale charset.
+	  *
+	  * @param name parameter name
+	  * @param value parameter value
+	  */
 	parameter(const string& name, const string& value);
 
 
@@ -66,6 +84,8 @@ public:
 	shared_ptr <component> clone() const;
 	void copyFrom(const component& other);
 	parameter& operator=(const parameter& other);
+
+	size_t getGeneratedSize(const generationContext& ctx);
 
 	const std::vector <shared_ptr <component> > getChildComponents();
 
